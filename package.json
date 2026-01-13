@@ -1,0 +1,52 @@
+{
+    "name": "blog-post-api",
+    "version": "1.0.0",
+    "description": "RESTful API for managing blog posts - Technical Test",
+    "main": "dist/server.js",
+    "scripts": {
+        "dev": "tsx watch src/server.ts",
+        "build": "tsc",
+        "start": "node dist/server.js",
+        "lint": "eslint src/**/*.ts",
+        "lint:fix": "eslint src/**/*.ts --fix",
+        "format": "prettier --write \"src/**/*.ts\"",
+        "migrate": "tsx src/scripts/migrate.ts"
+    },
+    "keywords": [
+        "blog",
+        "api",
+        "rest",
+        "express",
+        "typescript",
+        "postgresql"
+    ],
+    "author": "Handika Tri Arlan",
+    "license": "MIT",
+    "dependencies": {
+        "cors": "^2.8.5",
+        "dotenv": "^16.4.7",
+        "express": "^4.21.2",
+        "helmet": "^8.0.0",
+        "morgan": "^1.10.0",
+        "pg": "^8.13.1",
+        "zod": "^3.24.1"
+    },
+    "devDependencies": {
+        "@types/cors": "^2.8.17",
+        "@types/express": "^5.0.0",
+        "@types/morgan": "^1.9.9",
+        "@types/node": "^22.10.5",
+        "@types/pg": "^8.11.10",
+        "@typescript-eslint/eslint-plugin": "^8.19.1",
+        "@typescript-eslint/parser": "^8.19.1",
+        "eslint": "^9.18.0",
+        "eslint-config-prettier": "^9.1.0",
+        "eslint-plugin-prettier": "^5.2.2",
+        "prettier": "^3.4.2",
+        "tsx": "^4.19.2",
+        "typescript": "^5.7.3"
+    },
+    "engines": {
+        "node": ">=20.0.0"
+    }
+}
