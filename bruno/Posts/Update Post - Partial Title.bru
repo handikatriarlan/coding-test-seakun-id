@@ -1,0 +1,42 @@
+meta {
+  name: Update Post - Partial (Title Only)
+  type: http
+  seq: 11
+}
+
+put {
+  url: {{baseUrl}}/posts/1
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "title": "Only Title Updated"
+  }
+}
+
+assert {
+  res.status: eq 200
+  res.body.success: eq true
+  res.body.data.title: eq Only Title Updated
+}
+
+tests {
+  test("should return 200 OK", function() {
+    expect(res.status).to.equal(200);
+  });
+
+  test("should update only the title", function() {
+    expect(res.body.data.title).to.equal("Only Title Updated");
+  });
+
+  test("should keep content unchanged", function() {
+    expect(res.body.data.content).to.be.a("string");
+    expect(res.body.data.content.length).to.be.greaterThan(0);
+  });
+}

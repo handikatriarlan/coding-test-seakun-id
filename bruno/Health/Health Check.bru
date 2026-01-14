@@ -1,0 +1,36 @@
+meta {
+  name: Health Check
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/health
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.success: eq true
+  res.body.message: eq Blog Post API is running
+  res.body.version: eq 1.0.0
+}
+
+tests {
+  test("should return 200 OK", function() {
+    expect(res.status).to.equal(200);
+  });
+
+  test("should have success true", function() {
+    expect(res.body.success).to.equal(true);
+  });
+
+  test("should return API version", function() {
+    expect(res.body.version).to.equal("1.0.0");
+  });
+
+  test("should have timestamp", function() {
+    expect(res.body.timestamp).to.be.a("string");
+  });
+}

@@ -1,0 +1,43 @@
+meta {
+  name: Update Post - Empty Body
+  type: http
+  seq: 14
+}
+
+put {
+  url: {{baseUrl}}/posts/1
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {}
+}
+
+assert {
+  res.status: eq 400
+  res.body.success: eq false
+  res.body.error.code: eq VALIDATION_ERROR
+}
+
+tests {
+  test("should return 400 Bad Request", function() {
+    expect(res.status).to.equal(400);
+  });
+
+  test("should have success false", function() {
+    expect(res.body.success).to.equal(false);
+  });
+
+  test("should return VALIDATION_ERROR code", function() {
+    expect(res.body.error.code).to.equal("VALIDATION_ERROR");
+  });
+
+  test("should require at least one field", function() {
+    expect(res.body.error.message).to.equal("Validation failed");
+  });
+}

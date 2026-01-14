@@ -1,0 +1,61 @@
+meta {
+  name: Get All Posts
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/posts
+  body: none
+  auth: none
+}
+
+query {
+  ~page: 1
+  ~limit: 10
+}
+
+assert {
+  res.status: eq 200
+  res.body.success: eq true
+  res.body.data: isArray
+  res.body.pagination: isDefined
+  res.body.pagination.page: isNumber
+  res.body.pagination.limit: isNumber
+  res.body.pagination.totalItems: isNumber
+  res.body.pagination.totalPages: isNumber
+}
+
+tests {
+  test("should return 200 OK", function() {
+    expect(res.status).to.equal(200);
+  });
+
+  test("should have success true", function() {
+    expect(res.body.success).to.equal(true);
+  });
+
+  test("should return array of posts", function() {
+    expect(res.body.data).to.be.an("array");
+  });
+
+  test("should have pagination metadata", function() {
+    expect(res.body.pagination).to.have.property("page");
+    expect(res.body.pagination).to.have.property("limit");
+    expect(res.body.pagination).to.have.property("totalItems");
+    expect(res.body.pagination).to.have.property("totalPages");
+    expect(res.body.pagination).to.have.property("hasNextPage");
+    expect(res.body.pagination).to.have.property("hasPrevPage");
+  });
+
+  test("each post should have required fields", function() {
+    if (res.body.data.length > 0) {
+      const post = res.body.data[0];
+      expect(post).to.have.property("id");
+      expect(post).to.have.property("title");
+      expect(post).to.have.property("content");
+      expect(post).to.have.property("created_at");
+      expect(post).to.have.property("updated_at");
+    }
+  });
+}

@@ -1,0 +1,52 @@
+meta {
+  name: Update Post
+  type: http
+  seq: 10
+}
+
+put {
+  url: {{baseUrl}}/posts/1
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "title": "Updated Post Title",
+    "content": "This is the updated content of the post. Modified using Bruno API client."
+  }
+}
+
+assert {
+  res.status: eq 200
+  res.body.success: eq true
+  res.body.message: eq Post updated successfully
+  res.body.data.id: eq 1
+  res.body.data.title: eq Updated Post Title
+}
+
+tests {
+  test("should return 200 OK", function() {
+    expect(res.status).to.equal(200);
+  });
+
+  test("should have success true", function() {
+    expect(res.body.success).to.equal(true);
+  });
+
+  test("should return success message", function() {
+    expect(res.body.message).to.equal("Post updated successfully");
+  });
+
+  test("should return updated title", function() {
+    expect(res.body.data.title).to.equal("Updated Post Title");
+  });
+
+  test("should have updated_at changed", function() {
+    expect(res.body.data.updated_at).to.be.a("string");
+  });
+}

@@ -1,0 +1,36 @@
+meta {
+  name: Get All Posts with Pagination
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/posts?page=1&limit=5
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.success: eq true
+  res.body.pagination.page: eq 1
+  res.body.pagination.limit: eq 5
+}
+
+tests {
+  test("should return 200 OK", function() {
+    expect(res.status).to.equal(200);
+  });
+
+  test("should respect page parameter", function() {
+    expect(res.body.pagination.page).to.equal(1);
+  });
+
+  test("should respect limit parameter", function() {
+    expect(res.body.pagination.limit).to.equal(5);
+  });
+
+  test("should not return more items than limit", function() {
+    expect(res.body.data.length).to.be.at.most(5);
+  });
+}

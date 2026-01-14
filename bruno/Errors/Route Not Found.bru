@@ -1,0 +1,35 @@
+meta {
+  name: Route Not Found
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/nonexistent
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 404
+  res.body.success: eq false
+  res.body.error.code: eq ROUTE_NOT_FOUND
+}
+
+tests {
+  test("should return 404 Not Found", function() {
+    expect(res.status).to.equal(404);
+  });
+
+  test("should have success false", function() {
+    expect(res.body.success).to.equal(false);
+  });
+
+  test("should return ROUTE_NOT_FOUND error code", function() {
+    expect(res.body.error.code).to.equal("ROUTE_NOT_FOUND");
+  });
+
+  test("should have descriptive error message", function() {
+    expect(res.body.error.message).to.include("not found");
+  });
+}

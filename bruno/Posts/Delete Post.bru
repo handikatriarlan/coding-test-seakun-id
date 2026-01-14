@@ -1,0 +1,29 @@
+meta {
+  name: Delete Post
+  type: http
+  seq: 15
+}
+
+delete {
+  url: {{baseUrl}}/posts/{{createdPostId}}
+  body: none
+  auth: none
+}
+
+vars:pre-request {
+  createdPostId: 1
+}
+
+assert {
+  res.status: eq 204
+}
+
+tests {
+  test("should return 204 No Content", function() {
+    expect(res.status).to.equal(204);
+  });
+
+  test("should have empty response body", function() {
+    expect(res.body).to.be.empty;
+  });
+}
