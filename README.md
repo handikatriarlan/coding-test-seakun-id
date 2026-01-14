@@ -81,7 +81,7 @@ The easiest way to run the application with all dependencies:
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/handikatriarlan/coding-test-seakun-id.git
 cd coding-test-seakun-id
 
 # Start all services
