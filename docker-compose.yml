@@ -1,0 +1,52 @@
+services:
+  # Node.js API Application
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: blog-api
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=blog_db
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres123
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - blog-network
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: blog-postgres
+    restart: unless-stopped
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_DB=blog_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./migrations/001_create_posts_table.sql:/docker-entrypoint-initdb.d/001_create_posts_table.sql:ro,Z
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d blog_db']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - blog-network
+
+networks:
+  blog-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
