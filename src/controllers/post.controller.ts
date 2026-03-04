@@ -47,8 +47,12 @@ export class PostController {
     next: NextFunction
   ): Promise<void> {
     try {
-      req.body.slug = req.body.title.toLowerCase().replace(/\s+/g, '-');
-      const post = await postService.createPost(req.body);
+      req.body.slug = req.body.title.toLowerCase().trim().replace(/\s+/g, '-');
+      const post = await postService.createPost({
+        title: req.body.title,
+        content: req.body.content,
+        slug: req.body.slug || '',
+      });
 
       sendSuccess(res, post, 'Post created successfully', 201);
     } catch (error) {
@@ -64,6 +68,9 @@ export class PostController {
   ): Promise<void> {
     try {
       const id = parseInt(req.params.id, 10);
+      if (req.body.title && !req.body.slug) {
+        req.body.slug = req.body.title.toLowerCase().trim().replace(/\s+/g, '-');
+      }
       const post = await postService.updatePost(id, req.body);
 
       sendSuccess(res, post, 'Post updated successfully');

@@ -17,10 +17,11 @@ export const createPostSchema = z.object({
       })
       .min(1, 'Content cannot be empty')
       .trim(),
-    slug: z.string({
-      required_error: 'Slug is required',
-      invalid_type_error: 'Slug must be a string',
-    }),
+    slug: z
+      .string({
+        invalid_type_error: 'Slug must be a string',
+      })
+      .optional(),
   }),
 });
 
