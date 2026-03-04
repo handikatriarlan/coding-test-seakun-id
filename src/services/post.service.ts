@@ -26,7 +26,7 @@ export class PostService {
       const totalItemsSearch = parseInt(countResultSearch.rows[0].count, 10);
 
       const resultSearch = await query<Post>(
-        `SELECT id, title, content, slug, created_at, updated_at 
+        `SELECT id, title, content, slug, created_at, updated_at, deleted_at 
        FROM posts 
        WHERE title ILIKE $3 OR content ILIKE $3
        ORDER BY created_at DESC 
@@ -43,7 +43,7 @@ export class PostService {
     }
     // Get paginated posts ordered by newest first
     const result = await query<Post>(
-      `SELECT id, title, content, slug, created_at, updated_at 
+      `SELECT id, title, content, slug, created_at, updated_at, deleted_at 
        FROM posts 
        ORDER BY created_at DESC 
        LIMIT $1 OFFSET $2`,
@@ -66,7 +66,7 @@ export class PostService {
    */
   async getPostById(id: number): Promise<Post> {
     const result = await query<Post>(
-      'SELECT id, title, content, slug, created_at, updated_at FROM posts WHERE id = $1',
+      'SELECT id, title, content, slug, created_at, updated_at, deleted_at FROM posts WHERE id = $1',
       [id]
     );
 
@@ -86,7 +86,7 @@ export class PostService {
     const result = await query<Post>(
       `INSERT INTO posts (title, content, slug) 
        VALUES ($1, $2, $3) 
-       RETURNING id, title, content, slug, created_at, updated_at`,
+       RETURNING id, title, content, slug, created_at, updated_at, deleted_at`,
       [data.title, data.content, data.slug]
     );
 
@@ -135,7 +135,7 @@ export class PostService {
       `UPDATE posts 
        SET ${updates.join(', ')} 
        WHERE id = $${paramIndex} 
-       RETURNING id, title, content, created_at, updated_at`,
+       RETURNING id, title, content, created_at, updated_at, deleted_at`,
       values
     );
 
