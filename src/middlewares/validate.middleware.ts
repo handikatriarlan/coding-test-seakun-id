@@ -21,13 +21,7 @@ export const validate =
           message: err.message,
         }));
 
-        sendError(
-          res,
-          400,
-          'Validation failed',
-          'VALIDATION_ERROR',
-          errorMessages
-        );
+        sendError(res, 400, 'Validation failed', 'VALIDATION_ERROR', errorMessages);
         return;
       }
       next(error);

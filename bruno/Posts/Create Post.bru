@@ -17,7 +17,8 @@ headers {
 body:json {
   {
     "title": "Test Post from Bruno",
-    "content": "This is a test post created using Bruno API client. It demonstrates the POST /posts endpoint functionality."
+    "content": "This is a test post created using Bruno API client. It demonstrates the POST /posts endpoint functionality.",
+    "slug": "sda"
   }
 }
 
@@ -29,36 +30,36 @@ assert {
   res.body.data.title: eq Test Post from Bruno
 }
 
-tests {
-  test("should return 201 Created", function() {
-    expect(res.status).to.equal(201);
-  });
-
-  test("should have success true", function() {
-    expect(res.body.success).to.equal(true);
-  });
-
-  test("should return success message", function() {
-    expect(res.body.message).to.equal("Post created successfully");
-  });
-
-  test("should return created post with id", function() {
-    expect(res.body.data).to.have.property("id");
-    expect(res.body.data.id).to.be.a("number");
-  });
-
-  test("should return post with correct title", function() {
-    expect(res.body.data.title).to.equal("Test Post from Bruno");
-  });
-
-  test("should have timestamps", function() {
-    expect(res.body.data).to.have.property("created_at");
-    expect(res.body.data).to.have.property("updated_at");
-  });
-}
-
 script:post-response {
   if (res.body.data && res.body.data.id) {
     bru.setVar("createdPostId", res.body.data.id);
   }
+}
+
+tests {
+  test("should return 201 Created", function() {
+    expect(res.status).to.equal(201);
+  });
+  
+  test("should have success true", function() {
+    expect(res.body.success).to.equal(true);
+  });
+  
+  test("should return success message", function() {
+    expect(res.body.message).to.equal("Post created successfully");
+  });
+  
+  test("should return created post with id", function() {
+    expect(res.body.data).to.have.property("id");
+    expect(res.body.data.id).to.be.a("number");
+  });
+  
+  test("should return post with correct title", function() {
+    expect(res.body.data.title).to.equal("Test Post from Bruno");
+  });
+  
+  test("should have timestamps", function() {
+    expect(res.body.data).to.have.property("created_at");
+    expect(res.body.data).to.have.property("updated_at");
+  });
 }

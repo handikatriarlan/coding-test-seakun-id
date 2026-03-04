@@ -17,11 +17,7 @@ const router = Router();
  * @query   page (optional) - Page number (default: 1)
  * @query   limit (optional) - Items per page (default: 10, max: 100)
  */
-router.get(
-  '/',
-  validate(paginationSchema),
-  postController.getAllPosts.bind(postController)
-);
+router.get('/', validate(paginationSchema), postController.getAllPosts.bind(postController));
 
 /**
  * @route   GET /posts/:id
@@ -29,11 +25,7 @@ router.get(
  * @access  Public
  * @param   id - Post ID
  */
-router.get(
-  '/:id',
-  validate(getPostByIdSchema),
-  postController.getPostById.bind(postController)
-);
+router.get('/:id', validate(getPostByIdSchema), postController.getPostById.bind(postController));
 
 /**
  * @route   POST /posts
@@ -41,11 +33,7 @@ router.get(
  * @access  Public
  * @body    { title: string, content: string }
  */
-router.post(
-  '/',
-  validate(createPostSchema),
-  postController.createPost.bind(postController)
-);
+router.post('/', validate(createPostSchema), postController.createPost.bind(postController));
 
 /**
  * @route   PUT /posts/:id
@@ -54,11 +42,7 @@ router.post(
  * @param   id - Post ID
  * @body    { title?: string, content?: string }
  */
-router.put(
-  '/:id',
-  validate(updatePostSchema),
-  postController.updatePost.bind(postController)
-);
+router.put('/:id', validate(updatePostSchema), postController.updatePost.bind(postController));
 
 /**
  * @route   DELETE /posts/:id
@@ -66,10 +50,6 @@ router.put(
  * @access  Public
  * @param   id - Post ID
  */
-router.delete(
-  '/:id',
-  validate(getPostByIdSchema),
-  postController.deletePost.bind(postController)
-);
+router.delete('/:id', validate(getPostByIdSchema), postController.deletePost.bind(postController));
 
 export default router;

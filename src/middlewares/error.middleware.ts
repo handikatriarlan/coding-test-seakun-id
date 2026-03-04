@@ -35,15 +35,6 @@ export const errorHandler = (
 };
 
 // 404 Not Found handler for undefined routes
-export const notFoundHandler = (
-  req: Request,
-  res: Response,
-  _next: NextFunction
-): void => {
-  sendError(
-    res,
-    404,
-    `Route ${req.method} ${req.originalUrl} not found`,
-    'ROUTE_NOT_FOUND'
-  );
+export const notFoundHandler = (req: Request, res: Response, _next: NextFunction): void => {
+  sendError(res, 404, `Route ${req.method} ${req.originalUrl} not found`, 'ROUTE_NOT_FOUND');
 };

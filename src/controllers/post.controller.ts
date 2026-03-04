@@ -9,9 +9,16 @@ export class PostController {
     try {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
-      const result = await postService.getAllPosts(page, limit);
+      const search = (req.query.search as string) || '';
+      const resultTemp = await postService.getAllPosts(page, limit, search);
+      const result = resultTemp.data.map((post) => ({
+        ...post,
+        contentLength: post.content ? post.content.length : 0,
+      }));
 
-      sendPaginatedSuccess(res, result.data, result.pagination);
+      console.log(result);
+
+      sendPaginatedSuccess(res, result, resultTemp.pagination);
     } catch (error) {
       next(error);
     }
@@ -40,6 +47,7 @@ export class PostController {
     next: NextFunction
   ): Promise<void> {
     try {
+      req.body.slug = req.body.title.toLowerCase().replace(/\s+/g, '-');
       const post = await postService.createPost(req.body);
 
       sendSuccess(res, post, 'Post created successfully', 201);

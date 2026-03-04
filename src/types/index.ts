@@ -2,6 +2,7 @@ export interface Post {
   id: number;
   title: string;
   content: string;
+  slug: string;
   created_at: Date;
   updated_at: Date;
 }
@@ -9,11 +10,13 @@ export interface Post {
 export interface CreatePostDTO {
   title: string;
   content: string;
+  slug: string;
 }
 
 export interface UpdatePostDTO {
   title?: string;
   content?: string;
+  slug?: string;
 }
 
 export interface PaginationMeta {

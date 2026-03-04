@@ -10,7 +10,7 @@ export class PostService {
    * @param limit - Number of items per page
    * @returns Paginated response with posts
    */
-  async getAllPosts(page: number, limit: number): Promise<PaginatedResponse<Post>> {
+  async getAllPosts(page: number, limit: number, search: string): Promise<PaginatedResponse<Post>> {
     // Calculate offset for pagination
     const offset = (page - 1) * limit;
 
@@ -18,9 +18,32 @@ export class PostService {
     const countResult = await query<{ count: string }>('SELECT COUNT(*) as count FROM posts');
     const totalItems = parseInt(countResult.rows[0].count, 10);
 
+    if (search) {
+      const countResultSearch = await query<{ count: string }>(
+        'SELECT COUNT(*) as count FROM posts WHERE title ILIKE $1 OR content ILIKE $1',
+        [`%${search}%`]
+      );
+      const totalItemsSearch = parseInt(countResultSearch.rows[0].count, 10);
+
+      const resultSearch = await query<Post>(
+        `SELECT id, title, content, slug, created_at, updated_at 
+       FROM posts 
+       WHERE title ILIKE $3 OR content ILIKE $3
+       ORDER BY created_at DESC 
+       LIMIT $1 OFFSET $2`,
+        [limit, offset, `%${search}%`]
+      );
+
+      const pagination = calculatePagination(page, limit, totalItemsSearch);
+
+      return {
+        data: resultSearch.rows,
+        pagination,
+      };
+    }
     // Get paginated posts ordered by newest first
     const result = await query<Post>(
-      `SELECT id, title, content, created_at, updated_at 
+      `SELECT id, title, content, slug, created_at, updated_at 
        FROM posts 
        ORDER BY created_at DESC 
        LIMIT $1 OFFSET $2`,
@@ -43,7 +66,7 @@ export class PostService {
    */
   async getPostById(id: number): Promise<Post> {
     const result = await query<Post>(
-      'SELECT id, title, content, created_at, updated_at FROM posts WHERE id = $1',
+      'SELECT id, title, content, slug, created_at, updated_at FROM posts WHERE id = $1',
       [id]
     );
 
@@ -61,11 +84,13 @@ export class PostService {
    */
   async createPost(data: CreatePostDTO): Promise<Post> {
     const result = await query<Post>(
-      `INSERT INTO posts (title, content) 
-       VALUES ($1, $2) 
-       RETURNING id, title, content, created_at, updated_at`,
-      [data.title, data.content]
+      `INSERT INTO posts (title, content, slug) 
+       VALUES ($1, $2, $3) 
+       RETURNING id, title, content, slug, created_at, updated_at`,
+      [data.title, data.content, data.slug]
     );
+
+    console.log(data.title, data.content, data.slug);
 
     return result.rows[0];
   }
@@ -98,6 +123,12 @@ export class PostService {
       paramIndex++;
     }
 
+    if (data.slug !== undefined) {
+      updates.push(`slug = $${paramIndex}`);
+      values.push(data.slug);
+      paramIndex++;
+    }
+
     values.push(id);
 
     const result = await query<Post>(
@@ -117,7 +148,9 @@ export class PostService {
    * @throws ApiError if post not found
    */
   async deletePost(id: number): Promise<void> {
-    const result = await query('DELETE FROM posts WHERE id = $1 RETURNING id', [id]);
+    const result = await query('UPDATE posts SET deleted_at = NOW() WHERE id = $1 RETURNING id', [
+      id,
+    ]);
 
     if (result.rowCount === 0) {
       throw ApiError.notFound(`Post with id ${id} not found`, 'POST_NOT_FOUND');
